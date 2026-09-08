@@ -297,12 +297,18 @@ class BrowserAccount:
                 await self._page.goto(channel_url, wait_until="networkidle")
                 await asyncio.sleep(2)
 
-            selector = '[data-slate-editor="true"]'
+            # Target the message input inside channelTextArea, not the search box
+            selector = '[class*="channelTextArea"] [data-slate-editor="true"]'
             await self._page.wait_for_selector(selector, timeout=10000)
             editor = await self._page.query_selector(selector)
             if not editor:
-                log.warning("[%s] chat input not found", self.name)
-                return False
+                # Fallback: try the last slate editor on the page (message input is usually last)
+                editors = await self._page.query_selector_all('[data-slate-editor="true"]')
+                if editors:
+                    editor = editors[-1]
+                else:
+                    log.warning("[%s] chat input not found", self.name)
+                    return False
 
             await editor.click()
             await asyncio.sleep(0.3)
