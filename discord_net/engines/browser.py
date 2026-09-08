@@ -90,7 +90,6 @@ class BrowserAccount:
             headless=self.headless,
             args=launch_args,
             viewport={"width": 1920, "height": 1080},
-            screen={"width": 1920, "height": 1080},
             user_agent=(
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                 "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -99,24 +98,21 @@ class BrowserAccount:
             locale="en-GB",
             timezone_id="Asia/Karachi",
             ignore_https_errors=True,
-            no_viewport=True,
         )
 
-        # Maximize window and set normal appearance
-        await self._page.set_viewport_size({"width": 1920, "height": 1080})
         await self._context.add_init_script("""
             Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
             Object.defineProperty(navigator, 'languages', { get: () => ['en-GB', 'en-US', 'en'] });
             Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3, 4, 5] });
             window.chrome = { runtime: {} };
-            // Set window to look normal
-            Object.defineProperty(window, 'outerWidth', { get: () => 1920 });
-            Object.defineProperty(window, 'outerHeight', { get: () => 1080 });
-            Object.defineProperty(window, 'innerWidth', { get: () => 1920 });
-            Object.defineProperty(window, 'innerHeight', { get: () => 1040 });
         """)
 
         self._page = self._context.pages[0] if self._context.pages else await self._context.new_page()
+
+        # Ensure we're on Discord
+        if "discord.com" not in self._page.url:
+            await self._page.goto("https://discord.com/app", wait_until="domcontentloaded")
+            await asyncio.sleep(2)
 
         if self.token:
             await self._login_with_token()
