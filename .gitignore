@@ -1,0 +1,49 @@
+# Secrets - never commit
+config.json
+.env
+*.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+*.so
+.python-version
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+logs/
+
+# Local test scaffolding (never commit)
+.tests/
+
+# Browser automation profiles (contain session data)
+browser_profiles/
+extensions/
+
+# Debug screenshots
+*.png
+
+# Editors / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Node (if any tooling)
+node_modules/
